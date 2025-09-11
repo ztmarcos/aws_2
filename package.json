@@ -1,0 +1,28 @@
+{
+  "name": "aws-typescript-project",
+  "version": "1.0.0",
+  "description": "TypeScript project with AWS SDK integration for cloud development",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "watch": "nodemon --exec ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.886.0",
+    "@aws-sdk/client-ec2": "^3.886.0",
+    "@aws-sdk/client-lambda": "^3.886.0",
+    "@aws-sdk/client-s3": "^3.886.0"
+  }
+}
