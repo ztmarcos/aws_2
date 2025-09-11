@@ -8,6 +8,9 @@
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "watch": "nodemon --exec ts-node src/index.ts",
+    "journal": "ts-node src/journal/index.ts",
+    "journal:dev": "nodemon --exec ts-node src/journal/index.ts",
+    "setup-journal": "ts-node src/journal/setup-journal.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

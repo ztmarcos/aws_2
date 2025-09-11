@@ -32,7 +32,7 @@ export class S3Helper {
 }
 
 export class DynamoDBHelper {
-  private client: DynamoDBClient;
+  public client: DynamoDBClient;
 
   constructor(region: string = 'us-east-1') {
     this.client = new DynamoDBClient({ region });
