@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Mi Journal Personal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-book"></i> Mi Journal Personal</h1>
+                <p class="subtitle">Tu espacio privado para reflexionar y recordar</p>
+            </div>
+            <div class="header-actions">
+                <button id="newEntryBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nueva Entrada
+                </button>
+                <button id="searchBtn" class="btn btn-secondary">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <section id="dashboard" class="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalEntries">0</h3>
+                            <p>Entradas Totales</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="thisWeekEntries">0</h3>
+                            <p>Esta Semana</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalTags">0</h3>
+                            <p>Tags Únicos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="streakDays">0</h3>
+                            <p>Días Consecutivos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Entries -->
+                <div class="recent-entries">
+                    <h2><i class="fas fa-clock"></i> Entradas Recientes</h2>
+                    <div id="recentEntriesList" class="entries-list">
+                        <!-- Entries will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Entry Form -->
+            <section id="newEntryForm" class="entry-form hidden">
+                <div class="form-header">
+                    <h2><i class="fas fa-edit"></i> Nueva Entrada</h2>
+                    <button id="closeFormBtn" class="btn btn-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="entryForm">
+                    <div class="form-group">
+                        <label for="entryTitle">Título</label>
+                        <input type="text" id="entryTitle" name="title" required 
+                               placeholder="¿De qué quieres escribir hoy?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="entryContent">Contenido</label>
+                        <textarea id="entryContent" name="content" rows="10" required
+                                  placeholder="Escribe tus pensamientos, reflexiones, recuerdos..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="entryTags">Tags (separados por comas)</label>
+                        <input type="text" id="entryTags" name="tags" 
+                               placeholder="personal, trabajo, viajes, reflexión...">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="saveDraftBtn" class="btn btn-secondary">
+                            <i class="fas fa-save"></i> Guardar Borrador
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Publicar Entrada
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Search Section -->
+            <section id="searchSection" class="search-section hidden">
+                <div class="search-header">
+                    <h2><i class="fas fa-search"></i> Buscar Entradas</h2>
+                    <button id="closeSearchBtn" class="btn btn-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-controls">
+                    <div class="search-input-group">
+                        <input type="text" id="searchInput" placeholder="Buscar en títulos y contenido...">
+                        <button id="searchSubmitBtn" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-filters">
+                        <select id="dateFilter">
+                            <option value="">Todas las fechas</option>
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta semana</option>
+                            <option value="month">Este mes</option>
+                        </select>
+                        <select id="tagFilter">
+                            <option value="">Todos los tags</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="searchResults" class="search-results">
+                    <!-- Search results will be displayed here -->
+                </div>
+            </section>
+
+            <!-- Entry Detail -->
+            <section id="entryDetail" class="entry-detail hidden">
+                <div class="entry-header">
+                    <button id="backToListBtn" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </button>
+                    <div class="entry-actions">
+                        <button id="editEntryBtn" class="btn btn-secondary">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button id="deleteEntryBtn" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+                <article class="entry-content">
+                    <header class="entry-meta">
+                        <h1 id="entryDetailTitle"></h1>
+                        <div class="entry-info">
+                            <span id="entryDetailDate" class="entry-date"></span>
+                            <div id="entryDetailTags" class="entry-tags"></div>
+                        </div>
+                    </header>
+                    <div id="entryDetailContent" class="entry-body"></div>
+                </article>
+            </section>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Cargando...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
