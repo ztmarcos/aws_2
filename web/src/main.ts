@@ -1,77 +1,95 @@
-// Journal Web App
+// Journal Web App - TypeScript Version
+import './style.css'
+
+interface JournalEntry {
+    id: string;
+    title: string;
+    content: string;
+    tags: string[];
+    date: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 class JournalApp {
+    private currentView: string = 'dashboard';
+    private entries: JournalEntry[] = [];
+    private currentEntry?: JournalEntry;
+    private editingEntry?: JournalEntry;
+
     constructor() {
-        this.currentView = 'dashboard';
-        this.entries = [];
         this.init();
     }
 
-    init() {
+    private init(): void {
         this.bindEvents();
         this.loadEntries();
         this.showView('dashboard');
     }
 
-    bindEvents() {
+    private bindEvents(): void {
         // Navigation buttons
-        document.getElementById('newEntryBtn').addEventListener('click', () => this.showNewEntryForm());
-        document.getElementById('searchBtn').addEventListener('click', () => this.showSearchSection());
-        document.getElementById('closeFormBtn').addEventListener('click', () => this.showDashboard());
-        document.getElementById('closeSearchBtn').addEventListener('click', () => this.showDashboard());
-        document.getElementById('backToListBtn').addEventListener('click', () => this.showDashboard());
+        document.getElementById('newEntryBtn')?.addEventListener('click', () => this.showNewEntryForm());
+        document.getElementById('searchBtn')?.addEventListener('click', () => this.showSearchSection());
+        document.getElementById('closeFormBtn')?.addEventListener('click', () => this.showDashboard());
+        document.getElementById('closeSearchBtn')?.addEventListener('click', () => this.showDashboard());
+        document.getElementById('backToListBtn')?.addEventListener('click', () => this.showDashboard());
 
         // Form submission
-        document.getElementById('entryForm').addEventListener('submit', (e) => this.handleSubmit(e));
-        document.getElementById('saveDraftBtn').addEventListener('click', () => this.saveDraft());
+        document.getElementById('entryForm')?.addEventListener('submit', (e) => this.handleSubmit(e));
+        document.getElementById('saveDraftBtn')?.addEventListener('click', () => this.saveDraft());
 
         // Search
-        document.getElementById('searchSubmitBtn').addEventListener('click', () => this.performSearch());
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        document.getElementById('searchSubmitBtn')?.addEventListener('click', () => this.performSearch());
+        document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.performSearch();
         });
 
         // Entry actions
-        document.getElementById('editEntryBtn').addEventListener('click', () => this.editCurrentEntry());
-        document.getElementById('deleteEntryBtn').addEventListener('click', () => this.deleteCurrentEntry());
+        document.getElementById('editEntryBtn')?.addEventListener('click', () => this.editCurrentEntry());
+        document.getElementById('deleteEntryBtn')?.addEventListener('click', () => this.deleteCurrentEntry());
     }
 
-    showView(view) {
+    private showView(view: string): void {
         // Hide all sections
         document.querySelectorAll('section').forEach(section => {
             section.classList.add('hidden');
         });
 
         // Show selected section
-        document.getElementById(view).classList.remove('hidden');
+        const targetSection = document.getElementById(view);
+        if (targetSection) {
+            targetSection.classList.remove('hidden');
+        }
         this.currentView = view;
 
         // Update navigation state
         this.updateNavigationState();
     }
 
-    showDashboard() {
+    private showDashboard(): void {
         this.showView('dashboard');
         this.loadEntries();
         this.updateStats();
     }
 
-    showNewEntryForm() {
+    private showNewEntryForm(): void {
         this.showView('newEntryForm');
         this.clearForm();
     }
 
-    showSearchSection() {
+    private showSearchSection(): void {
         this.showView('searchSection');
         this.loadTagsForFilter();
     }
 
-    updateNavigationState() {
+    private updateNavigationState(): void {
         // Update button states based on current view
         const buttons = document.querySelectorAll('.header-actions .btn');
         buttons.forEach(btn => btn.classList.remove('active'));
     }
 
-    async loadEntries() {
+    private async loadEntries(): Promise<void> {
         try {
             this.showLoading();
             
@@ -92,7 +110,7 @@ class JournalApp {
         }
     }
 
-    getSampleEntries() {
+    private getSampleEntries(): JournalEntry[] {
         return [
             {
                 id: '1',
@@ -113,8 +131,10 @@ class JournalApp {
         ];
     }
 
-    renderRecentEntries() {
+    private renderRecentEntries(): void {
         const container = document.getElementById('recentEntriesList');
+        if (!container) return;
+
         const recentEntries = this.entries.slice(0, 5);
 
         if (recentEntries.length === 0) {
@@ -147,24 +167,31 @@ class JournalApp {
         `).join('');
     }
 
-    updateStats() {
+    private updateStats(): void {
         const totalEntries = this.entries.length;
         const thisWeek = this.getThisWeekEntries();
         const uniqueTags = new Set(this.entries.flatMap(entry => entry.tags)).size;
         const streak = this.calculateStreak();
 
-        document.getElementById('totalEntries').textContent = totalEntries;
-        document.getElementById('thisWeekEntries').textContent = thisWeek;
-        document.getElementById('totalTags').textContent = uniqueTags;
-        document.getElementById('streakDays').textContent = streak;
+        this.updateElement('totalEntries', totalEntries.toString());
+        this.updateElement('thisWeekEntries', thisWeek.toString());
+        this.updateElement('totalTags', uniqueTags.toString());
+        this.updateElement('streakDays', streak.toString());
     }
 
-    getThisWeekEntries() {
+    private updateElement(id: string, value: string): void {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    private getThisWeekEntries(): number {
         const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         return this.entries.filter(entry => new Date(entry.date) >= oneWeekAgo).length;
     }
 
-    calculateStreak() {
+    private calculateStreak(): number {
         // Simple streak calculation - consecutive days with entries
         const sortedEntries = this.entries
             .map(entry => entry.date)
@@ -190,15 +217,17 @@ class JournalApp {
         return streak;
     }
 
-    async handleSubmit(e) {
+    private async handleSubmit(e: Event): Promise<void> {
         e.preventDefault();
         
-        const formData = new FormData(e.target);
-        const entry = {
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        
+        const entry: JournalEntry = {
             id: Date.now().toString(),
-            title: formData.get('title'),
-            content: formData.get('content'),
-            tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag),
+            title: formData.get('title') as string,
+            content: formData.get('content') as string,
+            tags: (formData.get('tags') as string).split(',').map(tag => tag.trim()).filter(tag => tag),
             date: new Date().toISOString().split('T')[0],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -226,8 +255,10 @@ class JournalApp {
         }
     }
 
-    saveDraft() {
-        const formData = new FormData(document.getElementById('entryForm'));
+    private saveDraft(): void {
+        const form = document.getElementById('entryForm') as HTMLFormElement;
+        const formData = new FormData(form);
+        
         const draft = {
             title: formData.get('title'),
             content: formData.get('content'),
@@ -238,25 +269,26 @@ class JournalApp {
         this.showToast('Borrador guardado', 'info');
     }
 
-    loadDraft() {
+    private loadDraft(): void {
         const draft = localStorage.getItem('journalDraft');
         if (draft) {
             const draftData = JSON.parse(draft);
-            document.getElementById('entryTitle').value = draftData.title || '';
-            document.getElementById('entryContent').value = draftData.content || '';
-            document.getElementById('entryTags').value = draftData.tags || '';
+            (document.getElementById('entryTitle') as HTMLInputElement).value = draftData.title || '';
+            (document.getElementById('entryContent') as HTMLTextAreaElement).value = draftData.content || '';
+            (document.getElementById('entryTags') as HTMLInputElement).value = draftData.tags || '';
         }
     }
 
-    clearForm() {
-        document.getElementById('entryForm').reset();
+    private clearForm(): void {
+        const form = document.getElementById('entryForm') as HTMLFormElement;
+        form.reset();
         this.loadDraft();
     }
 
-    performSearch() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const dateFilter = document.getElementById('dateFilter').value;
-        const tagFilter = document.getElementById('tagFilter').value;
+    private performSearch(): void {
+        const query = (document.getElementById('searchInput') as HTMLInputElement).value.toLowerCase();
+        const dateFilter = (document.getElementById('dateFilter') as HTMLSelectElement).value;
+        const tagFilter = (document.getElementById('tagFilter') as HTMLSelectElement).value;
 
         let filteredEntries = this.entries;
 
@@ -298,8 +330,9 @@ class JournalApp {
         this.renderSearchResults(filteredEntries);
     }
 
-    renderSearchResults(entries) {
+    private renderSearchResults(entries: JournalEntry[]): void {
         const container = document.getElementById('searchResults');
+        if (!container) return;
         
         if (entries.length === 0) {
             container.innerHTML = `
@@ -328,50 +361,52 @@ class JournalApp {
         `).join('');
     }
 
-    loadTagsForFilter() {
+    private loadTagsForFilter(): void {
         const allTags = [...new Set(this.entries.flatMap(entry => entry.tags))];
-        const tagFilter = document.getElementById('tagFilter');
+        const tagFilter = document.getElementById('tagFilter') as HTMLSelectElement;
         
         tagFilter.innerHTML = '<option value="">Todos los tags</option>' +
             allTags.map(tag => `<option value="${this.escapeHtml(tag)}">${this.escapeHtml(tag)}</option>`).join('');
     }
 
-    showEntryDetail(entryId) {
+    public showEntryDetail(entryId: string): void {
         const entry = this.entries.find(e => e.id === entryId);
         if (!entry) return;
 
         this.currentEntry = entry;
         
-        document.getElementById('entryDetailTitle').textContent = entry.title;
-        document.getElementById('entryDetailDate').textContent = this.formatDate(entry.date);
-        document.getElementById('entryDetailContent').textContent = entry.content;
+        this.updateElement('entryDetailTitle', entry.title);
+        this.updateElement('entryDetailDate', this.formatDate(entry.date));
+        this.updateElement('entryDetailContent', entry.content);
         
         const tagsContainer = document.getElementById('entryDetailTags');
-        tagsContainer.innerHTML = entry.tags.map(tag => 
-            `<span class="tag">${this.escapeHtml(tag)}</span>`
-        ).join('');
+        if (tagsContainer) {
+            tagsContainer.innerHTML = entry.tags.map(tag => 
+                `<span class="tag">${this.escapeHtml(tag)}</span>`
+            ).join('');
+        }
 
         this.showView('entryDetail');
     }
 
-    editCurrentEntry() {
+    private editCurrentEntry(): void {
         if (!this.currentEntry) return;
         
         this.showNewEntryForm();
         
         // Populate form with current entry data
-        document.getElementById('entryTitle').value = this.currentEntry.title;
-        document.getElementById('entryContent').value = this.currentEntry.content;
-        document.getElementById('entryTags').value = this.currentEntry.tags.join(', ');
+        (document.getElementById('entryTitle') as HTMLInputElement).value = this.currentEntry.title;
+        (document.getElementById('entryContent') as HTMLTextAreaElement).value = this.currentEntry.content;
+        (document.getElementById('entryTags') as HTMLInputElement).value = this.currentEntry.tags.join(', ');
         
         this.editingEntry = this.currentEntry;
     }
 
-    deleteCurrentEntry() {
+    private deleteCurrentEntry(): void {
         if (!this.currentEntry) return;
         
         if (confirm('¿Estás seguro de que quieres eliminar esta entrada?')) {
-            this.entries = this.entries.filter(entry => entry.id !== this.currentEntry.id);
+            this.entries = this.entries.filter(entry => entry.id !== this.currentEntry!.id);
             localStorage.setItem('journalEntries', JSON.stringify(this.entries));
             this.showToast('Entrada eliminada', 'success');
             this.showDashboard();
@@ -379,7 +414,7 @@ class JournalApp {
     }
 
     // Utility functions
-    formatDate(dateString) {
+    private formatDate(dateString: string): string {
         const date = new Date(dateString);
         return date.toLocaleDateString('es-ES', {
             year: 'numeric',
@@ -388,7 +423,7 @@ class JournalApp {
         });
     }
 
-    formatTime(dateString) {
+    private formatTime(dateString: string): string {
         const date = new Date(dateString);
         return date.toLocaleTimeString('es-ES', {
             hour: '2-digit',
@@ -396,22 +431,30 @@ class JournalApp {
         });
     }
 
-    escapeHtml(text) {
+    private escapeHtml(text: string): string {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
 
-    showLoading() {
-        document.getElementById('loadingOverlay').classList.remove('hidden');
+    private showLoading(): void {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+        }
     }
 
-    hideLoading() {
-        document.getElementById('loadingOverlay').classList.add('hidden');
+    private hideLoading(): void {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
     }
 
-    showToast(message, type = 'info') {
+    private showToast(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
         const container = document.getElementById('toastContainer');
+        if (!container) return;
+
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         
@@ -430,12 +473,12 @@ class JournalApp {
         }, 3000);
     }
 
-    async simulateApiDelay() {
+    private async simulateApiDelay(): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new JournalApp();
+    (window as any).app = new JournalApp();
 });

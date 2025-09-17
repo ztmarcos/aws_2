@@ -1,6 +1,6 @@
-# 🌐 Journal Web App - Interfaz Web con AWS
+# 📖 Journal Personal - Interfaz Web con AWS
 
-Una interfaz web moderna y responsiva para tu journal personal, construida con AWS S3, CloudFront, Lambda y DynamoDB.
+Una aplicación web moderna y responsiva para tu journal personal, construida con TypeScript, React y servicios AWS serverless.
 
 ## ✨ Características
 
@@ -37,7 +37,7 @@ Una interfaz web moderna y responsiva para tu journal personal, construida con A
 
 ### **Frontend (S3 + CloudFront)**
 ```
-Usuario → CloudFront CDN → S3 Bucket (Archivos estáticos)
+Usuario → CloudFront CDN → S3 Bucket (Archivos estáticos React/TypeScript)
 ```
 
 ### **Backend (Lambda + API Gateway)**
@@ -46,11 +46,11 @@ Frontend → API Gateway → Lambda Functions → DynamoDB
 ```
 
 ### **Servicios Utilizados**
-- **S3**: Hosting de archivos estáticos (HTML, CSS, JS)
-- **CloudFront**: CDN global para mejor rendimiento
-- **Lambda**: API REST para operaciones CRUD
+- **S3**: Hosting de archivos estáticos (HTML, CSS, JS, TypeScript compilado)
+- **CloudFront**: CDN global para mejor rendimiento y HTTPS
+- **Lambda**: API REST para operaciones CRUD del journal
 - **API Gateway**: Endpoints HTTP para la API
-- **DynamoDB**: Base de datos NoSQL para entradas
+- **DynamoDB**: Base de datos NoSQL para almacenar entradas del journal
 
 ## 🚀 Despliegue
 
@@ -82,17 +82,18 @@ aws cloudfront create-distribution --distribution-config file://cloudfront-confi
 ```
 web/
 ├── index.html          # Página principal
-├── css/
+├── src/
+│   ├── main.ts         # Aplicación principal TypeScript
 │   └── style.css       # Estilos modernos
-├── js/
-│   └── app.js          # Lógica de la aplicación
-└── assets/             # Imágenes y recursos
+├── package.json        # Dependencias del frontend
+└── tsconfig.json       # Configuración TypeScript
 
 lambda/
 ├── api/
+│   ├── package.json    # Dependencias del backend
 │   └── serverless.yml  # Configuración de despliegue
 └── handlers/
-    └── journal-api.ts  # API Lambda
+    └── journal-api.ts  # API Lambda para el journal
 ```
 
 ## 🔧 Configuración
@@ -160,12 +161,12 @@ AWS_REGION=us-east-1
 ## 🎨 Personalización
 
 ### **Temas**
-- Modifica `css/style.css` para cambiar colores
+- Modifica `src/style.css` para cambiar colores
 - Los gradientes están en las variables CSS
 - Iconos de Font Awesome personalizables
 
 ### **Funcionalidades**
-- Agrega nuevos campos en `js/app.js`
+- Agrega nuevos campos en `src/main.ts`
 - Modifica la API en `lambda/handlers/journal-api.ts`
 - Configura nuevos endpoints en `serverless.yml`
 

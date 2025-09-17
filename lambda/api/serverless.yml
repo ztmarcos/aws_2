@@ -1,4 +1,4 @@
-service: journal-api
+service: journal-personal-api
 
 provider:
   name: aws
@@ -22,8 +22,8 @@ provider:
             - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.tableName}"
 
 custom:
-  tableName: JournalEntries
-  webBucketName: journal-web-${self:provider.stage}
+  tableName: JournalPersonalEntries
+  webBucketName: journal-personal-web-${self:provider.stage}
 
 functions:
   journalApi:
@@ -40,7 +40,7 @@ functions:
 
 resources:
   Resources:
-    JournalTable:
+    JournalPersonalTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.tableName}
@@ -52,7 +52,7 @@ resources:
           - AttributeName: id
             KeyType: HASH
 
-    WebBucket:
+    JournalPersonalWebBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.webBucketName}
@@ -65,24 +65,24 @@ resources:
           IgnorePublicAcls: false
           RestrictPublicBuckets: false
 
-    WebBucketPolicy:
+    JournalPersonalWebBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: !Ref WebBucket
+        Bucket: !Ref JournalPersonalWebBucket
         PolicyDocument:
           Statement:
             - Effect: Allow
               Principal: '*'
               Action: 's3:GetObject'
-              Resource: !Sub '${WebBucket}/*'
+              Resource: !Sub '${JournalPersonalWebBucket}/*'
 
-    CloudFrontDistribution:
+    JournalPersonalCloudFrontDistribution:
       Type: AWS::CloudFront::Distribution
       Properties:
         DistributionConfig:
           Origins:
             - Id: S3Origin
-              DomainName: !GetAtt WebBucket.RegionalDomainName
+              DomainName: !GetAtt JournalPersonalWebBucket.RegionalDomainName
               CustomOriginConfig:
                 HTTPPort: 80
                 HTTPSPort: 443
@@ -109,20 +109,20 @@ resources:
               ResponsePagePath: /index.html
 
   Outputs:
-    ApiUrl:
-      Description: API Gateway endpoint URL
+    JournalPersonalApiUrl:
+      Description: API Gateway endpoint URL para Journal Personal
       Value: !Sub 'https://${AWS::StackName}.execute-api.${AWS::Region}.amazonaws.com/${self:provider.stage}/entries'
       Export:
-        Name: ${self:provider.stage}-JournalApiUrl
+        Name: ${self:provider.stage}-JournalPersonalApiUrl
 
-    WebUrl:
-      Description: CloudFront distribution URL
-      Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
+    JournalPersonalWebUrl:
+      Description: CloudFront distribution URL para Journal Personal
+      Value: !Sub 'https://${JournalPersonalCloudFrontDistribution.DomainName}'
       Export:
-        Name: ${self:provider.stage}-JournalWebUrl
+        Name: ${self:provider.stage}-JournalPersonalWebUrl
 
-    TableName:
-      Description: DynamoDB table name
-      Value: !Ref JournalTable
+    JournalPersonalTableName:
+      Description: DynamoDB table name para Journal Personal
+      Value: !Ref JournalPersonalTable
       Export:
-        Name: ${self:provider.stage}-JournalTableName
+        Name: ${self:provider.stage}-JournalPersonalTableName
