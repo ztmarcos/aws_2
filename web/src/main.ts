@@ -1,7 +1,7 @@
-// Journal Web App - TypeScript Version
+// Food Tracker Web App - TypeScript Version
 import './style.css'
 
-interface JournalEntry {
+interface FoodEntry {
     id: string;
     title: string;
     content: string;
@@ -11,11 +11,11 @@ interface JournalEntry {
     updatedAt: string;
 }
 
-class JournalApp {
+class FoodTrackerApp {
     private currentView: string = 'dashboard';
-    private entries: JournalEntry[] = [];
-    private currentEntry?: JournalEntry;
-    private editingEntry?: JournalEntry;
+    private entries: FoodEntry[] = [];
+    private currentEntry?: FoodEntry;
+    private editingEntry?: FoodEntry;
 
     constructor() {
         this.init();
@@ -97,35 +97,35 @@ class JournalApp {
             await this.simulateApiDelay();
             
             // For demo purposes, load from localStorage
-            const savedEntries = localStorage.getItem('journalEntries');
+            const savedEntries = localStorage.getItem('foodEntries');
             this.entries = savedEntries ? JSON.parse(savedEntries) : this.getSampleEntries();
             
             this.renderRecentEntries();
             this.updateStats();
             
         } catch (error) {
-            this.showToast('Error cargando entradas', 'error');
+            this.showToast('Error cargando registros', 'error');
         } finally {
             this.hideLoading();
         }
     }
 
-    private getSampleEntries(): JournalEntry[] {
+    private getSampleEntries(): FoodEntry[] {
         return [
             {
                 id: '1',
-                title: 'Mi primer día con AWS',
-                content: 'Hoy aprendí sobre S3, DynamoDB y Lambda. Es increíble cómo estos servicios pueden trabajar juntos para crear aplicaciones poderosas.',
+                title: 'Desayuno energético',
+                content: 'Avena con plátano, yogur griego y semillas de chía. 420 kcal aproximadas, 20g de proteína.',
                 date: new Date().toISOString().split('T')[0],
-                tags: ['aws', 'aprendizaje', 'tecnología'],
+                tags: ['desayuno', 'alto en fibra', 'proteína'],
                 createdAt: new Date().toISOString()
             },
             {
                 id: '2',
-                title: 'Reflexiones sobre el desarrollo',
-                content: 'El desarrollo de software es tanto arte como ciencia. Cada línea de código cuenta una historia.',
+                title: 'Almuerzo balanceado',
+                content: 'Ensalada de pollo a la plancha con quinoa, espinacas y aderezo ligero. 550 kcal, ideal para después de entrenar.',
                 date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-                tags: ['desarrollo', 'reflexión'],
+                tags: ['almuerzo', 'equilibrado', 'post-entreno'],
                 createdAt: new Date(Date.now() - 86400000).toISOString()
             }
         ];
@@ -140,9 +140,9 @@ class JournalApp {
         if (recentEntries.length === 0) {
             container.innerHTML = `
                 <div class="text-center mt-20">
-                    <i class="fas fa-book-open" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 20px;"></i>
-                    <h3 style="color: #718096; margin-bottom: 10px;">No hay entradas aún</h3>
-                    <p style="color: #a0aec0;">¡Crea tu primera entrada para comenzar tu journal!</p>
+                    <i class="fas fa-utensils" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 20px;"></i>
+                    <h3 style="color: #718096; margin-bottom: 10px;">No hay registros aún</h3>
+                    <p style="color: #a0aec0;">Registra tu primera comida para comenzar el seguimiento.</p>
                 </div>
             `;
             return;
@@ -223,7 +223,7 @@ class JournalApp {
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
         
-        const entry: JournalEntry = {
+        const entry: FoodEntry = {
             id: Date.now().toString(),
             title: formData.get('title') as string,
             content: formData.get('content') as string,
@@ -243,13 +243,13 @@ class JournalApp {
             this.entries.unshift(entry);
             
             // Save to localStorage (in real app, this would be saved to DynamoDB via Lambda)
-            localStorage.setItem('journalEntries', JSON.stringify(this.entries));
+            localStorage.setItem('foodEntries', JSON.stringify(this.entries));
             
-            this.showToast('¡Entrada creada exitosamente!', 'success');
+            this.showToast('¡Registro de comida guardado!', 'success');
             this.showDashboard();
             
         } catch (error) {
-            this.showToast('Error creando entrada', 'error');
+            this.showToast('Error al guardar el registro', 'error');
         } finally {
             this.hideLoading();
         }
@@ -265,12 +265,12 @@ class JournalApp {
             tags: formData.get('tags')
         };
         
-        localStorage.setItem('journalDraft', JSON.stringify(draft));
+        localStorage.setItem('foodDraft', JSON.stringify(draft));
         this.showToast('Borrador guardado', 'info');
     }
 
     private loadDraft(): void {
-        const draft = localStorage.getItem('journalDraft');
+        const draft = localStorage.getItem('foodDraft');
         if (draft) {
             const draftData = JSON.parse(draft);
             (document.getElementById('entryTitle') as HTMLInputElement).value = draftData.title || '';
@@ -330,7 +330,7 @@ class JournalApp {
         this.renderSearchResults(filteredEntries);
     }
 
-    private renderSearchResults(entries: JournalEntry[]): void {
+    private renderSearchResults(entries: FoodEntry[]): void {
         const container = document.getElementById('searchResults');
         if (!container) return;
         
@@ -338,7 +338,7 @@ class JournalApp {
             container.innerHTML = `
                 <div class="text-center mt-20">
                     <i class="fas fa-search" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 20px;"></i>
-                    <h3 style="color: #718096;">No se encontraron entradas</h3>
+                    <h3 style="color: #718096;">No se encontraron registros</h3>
                     <p style="color: #a0aec0;">Intenta con otros términos de búsqueda</p>
                 </div>
             `;
@@ -365,7 +365,7 @@ class JournalApp {
         const allTags = [...new Set(this.entries.flatMap(entry => entry.tags))];
         const tagFilter = document.getElementById('tagFilter') as HTMLSelectElement;
         
-        tagFilter.innerHTML = '<option value="">Todos los tags</option>' +
+        tagFilter.innerHTML = '<option value="">Todas las etiquetas</option>' +
             allTags.map(tag => `<option value="${this.escapeHtml(tag)}">${this.escapeHtml(tag)}</option>`).join('');
     }
 
@@ -405,10 +405,10 @@ class JournalApp {
     private deleteCurrentEntry(): void {
         if (!this.currentEntry) return;
         
-        if (confirm('¿Estás seguro de que quieres eliminar esta entrada?')) {
+        if (confirm('¿Estás seguro de que quieres eliminar este registro?')) {
             this.entries = this.entries.filter(entry => entry.id !== this.currentEntry!.id);
-            localStorage.setItem('journalEntries', JSON.stringify(this.entries));
-            this.showToast('Entrada eliminada', 'success');
+            localStorage.setItem('foodEntries', JSON.stringify(this.entries));
+            this.showToast('Registro eliminado', 'success');
             this.showDashboard();
         }
     }
@@ -480,5 +480,5 @@ class JournalApp {
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    (window as any).app = new JournalApp();
+    (window as any).app = new FoodTrackerApp();
 });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📖 Mi Journal Personal</title>
+    <title>🍽️ Mi Food Tracker</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -11,12 +11,12 @@
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <h1><i class="fas fa-book"></i> Mi Journal Personal</h1>
-                <p class="subtitle">Tu espacio privado para reflexionar y recordar</p>
+                <h1><i class="fas fa-utensils"></i> Mi Food Tracker</h1>
+                <p class="subtitle">Registra tus comidas y hábitos diarios de alimentación</p>
             </div>
             <div class="header-actions">
                 <button id="newEntryBtn" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Nueva Entrada
+                    <i class="fas fa-plus"></i> Nuevo Registro
                 </button>
                 <button id="searchBtn" class="btn btn-secondary">
                     <i class="fas fa-search"></i> Buscar
@@ -35,7 +35,7 @@
                         </div>
                         <div class="stat-info">
                             <h3 id="totalEntries">0</h3>
-                            <p>Entradas Totales</p>
+                            <p>Registros totales</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -44,7 +44,7 @@
                         </div>
                         <div class="stat-info">
                             <h3 id="thisWeekEntries">0</h3>
-                            <p>Esta Semana</p>
+                            <p>Comidas esta semana</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -53,7 +53,7 @@
                         </div>
                         <div class="stat-info">
                             <h3 id="totalTags">0</h3>
-                            <p>Tags Únicos</p>
+                            <p>Etiquetas únicas</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -62,14 +62,14 @@
                         </div>
                         <div class="stat-info">
                             <h3 id="streakDays">0</h3>
-                            <p>Días Consecutivos</p>
+                            <p>Días consecutivos</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Recent Entries -->
                 <div class="recent-entries">
-                    <h2><i class="fas fa-clock"></i> Entradas Recientes</h2>
+                    <h2><i class="fas fa-clock"></i> Registros recientes</h2>
                     <div id="recentEntriesList" class="entries-list">
                         <!-- Entries will be loaded here -->
                     </div>
@@ -79,28 +79,28 @@
             <!-- New Entry Form -->
             <section id="newEntryForm" class="entry-form hidden">
                 <div class="form-header">
-                    <h2><i class="fas fa-edit"></i> Nueva Entrada</h2>
+                    <h2><i class="fas fa-edit"></i> Nuevo registro de comida</h2>
                     <button id="closeFormBtn" class="btn btn-close">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <form id="entryForm">
                     <div class="form-group">
-                        <label for="entryTitle">Título</label>
+                        <label for="entryTitle">Nombre de la comida</label>
                         <input type="text" id="entryTitle" name="title" required 
-                               placeholder="¿De qué quieres escribir hoy?">
+                               placeholder="Ej. Desayuno integral con frutas">
                     </div>
                     
                     <div class="form-group">
-                        <label for="entryContent">Contenido</label>
+                        <label for="entryContent">Detalles y porciones</label>
                         <textarea id="entryContent" name="content" rows="10" required
-                                  placeholder="Escribe tus pensamientos, reflexiones, recuerdos..."></textarea>
+                                  placeholder="Describe ingredientes, cantidades, calorías o cómo te sentiste"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="entryTags">Tags (separados por comas)</label>
+                        <label for="entryTags">Etiquetas (separadas por comas)</label>
                         <input type="text" id="entryTags" name="tags" 
-                               placeholder="personal, trabajo, viajes, reflexión...">
+                               placeholder="desayuno, alto en proteína, snack, antojo...">
                     </div>
                     
                     <div class="form-actions">
@@ -108,7 +108,7 @@
                             <i class="fas fa-save"></i> Guardar Borrador
                         </button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Publicar Entrada
+                            <i class="fas fa-paper-plane"></i> Registrar comida
                         </button>
                     </div>
                 </form>
@@ -117,14 +117,14 @@
             <!-- Search Section -->
             <section id="searchSection" class="search-section hidden">
                 <div class="search-header">
-                    <h2><i class="fas fa-search"></i> Buscar Entradas</h2>
+                    <h2><i class="fas fa-search"></i> Buscar registros</h2>
                     <button id="closeSearchBtn" class="btn btn-close">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="search-controls">
                     <div class="search-input-group">
-                        <input type="text" id="searchInput" placeholder="Buscar en títulos y contenido...">
+                        <input type="text" id="searchInput" placeholder="Busca por comida, ingredientes o notas...">
                         <button id="searchSubmitBtn" class="btn btn-primary">
                             <i class="fas fa-search"></i>
                         </button>
@@ -137,7 +137,7 @@
                             <option value="month">Este mes</option>
                         </select>
                         <select id="tagFilter">
-                            <option value="">Todos los tags</option>
+                            <option value="">Todas las etiquetas</option>
                         </select>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                     </button>
                     <div class="entry-actions">
                         <button id="editEntryBtn" class="btn btn-secondary">
-                            <i class="fas fa-edit"></i> Editar
+                            <i class="fas fa-edit"></i> Editar registro
                         </button>
                         <button id="deleteEntryBtn" class="btn btn-danger">
                             <i class="fas fa-trash"></i> Eliminar
